@@ -1,0 +1,39 @@
+name: "pastbuzz"
+
+services:
+  rails-app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+
+    volumes:
+    - ../../.:/workspaces/.:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: vscode
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    depends_on:
+    - selenium
+    - mariadb
+
+  selenium:
+    image: selenium/standalone-chromium
+    restart: unless-stopped
+
+  mariadb:
+    image: mariadb:10.5
+    restart: unless-stopped
+    networks:
+    - default
+    volumes:
+    - mariadb-data:/var/lib/mysql
+    environment:
+        MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'true'
+
+volumes:
+  mariadb-data:
