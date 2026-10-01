@@ -30,6 +30,8 @@ services:
     restart: unless-stopped
     networks:
     - default
+    ports:
+    - "3306:3306"
     volumes:
     - mariadb-data:/var/lib/mysql
     environment:

@@ -21,7 +21,10 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [3000, 3306],
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3306": { "onAutoForward": "ignore" }
+  },
 
   // Configure tool-specific properties.
   // "customizations": {},
@@ -31,5 +34,5 @@
 
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bin/setup --skip-server"
+  "postCreateCommand": "mise install && bin/setup --skip-server"
 }
