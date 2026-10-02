@@ -18,24 +18,32 @@ services:
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
     depends_on:
-    - selenium
-    - mariadb
+      selenium:
+        condition: service_started
+      mysql:
+        condition: service_healthy
 
   selenium:
     image: selenium/standalone-chromium
     restart: unless-stopped
 
-  mariadb:
-    image: mariadb:10.5
+  mysql:
+    image: mysql:8.4
     restart: unless-stopped
     networks:
     - default
     ports:
     - "3306:3306"
     volumes:
-    - mariadb-data:/var/lib/mysql
+    - mysql-data:/var/lib/mysql
     environment:
-        MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'true'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 volumes:
-  mariadb-data:
+  mysql-data:

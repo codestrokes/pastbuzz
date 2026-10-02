@@ -212,11 +212,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.integer "stock_location_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["stock_location_id"], name: "fk_rails_eb13b9087c"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_inventory_units", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -257,12 +255,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.decimal "additional_tax_total", precision: 10, scale: 2, default: "0.0"
     t.decimal "promo_total", precision: 10, scale: 2, default: "0.0"
     t.decimal "included_tax_total", precision: 10, scale: 2, default: "0.0", null: false
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["order_id"], name: "index_spree_line_items_on_order_id"
     t.index ["variant_id"], name: "index_spree_line_items_on_variant_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_log_entries", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -351,8 +347,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.integer "store_id"
     t.string "approver_name"
     t.boolean "frontend_viewable", default: true, null: false
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["approver_id"], name: "index_spree_orders_on_approver_id"
     t.index ["bill_address_id"], name: "index_spree_orders_on_bill_address_id"
     t.index ["completed_at"], name: "index_spree_orders_on_completed_at"
@@ -362,8 +358,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.index ["ship_address_id"], name: "index_spree_orders_on_ship_address_id"
     t.index ["user_id", "created_by_id"], name: "index_spree_orders_on_user_id_and_created_by_id"
     t.index ["user_id"], name: "index_spree_orders_on_user_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_orders_promotions", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -416,14 +410,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.string "number"
     t.string "cvv_response_code"
     t.string "cvv_response_message"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["number"], name: "index_spree_payments_on_number", unique: true
     t.index ["order_id"], name: "index_spree_payments_on_order_id"
     t.index ["payment_method_id"], name: "index_spree_payments_on_payment_method_id"
     t.index ["source_id", "source_type"], name: "index_spree_payments_on_source_id_and_source_type"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_permission_sets", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -670,13 +662,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.datetime "updated_at"
     t.integer "refund_reason_id"
     t.integer "reimbursement_id"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["payment_id"], name: "index_spree_refunds_on_payment_id"
     t.index ["refund_reason_id"], name: "index_refunds_on_refund_reason_id"
     t.index ["reimbursement_id"], name: "index_spree_refunds_on_reimbursement_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_reimbursement_credits", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -719,11 +709,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.datetime "updated_at"
     t.integer "stock_location_id"
     t.integer "return_reason_id"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["return_reason_id"], name: "index_return_authorizations_on_return_authorization_reason_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_return_items", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -798,13 +786,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.decimal "additional_tax_total", precision: 10, scale: 2, default: "0.0"
     t.decimal "promo_total", precision: 10, scale: 2, default: "0.0"
     t.decimal "included_tax_total", precision: 10, scale: 2, default: "0.0", null: false
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["number"], name: "index_shipments_on_number"
     t.index ["order_id"], name: "index_spree_shipments_on_order_id"
     t.index ["stock_location_id"], name: "index_spree_shipments_on_stock_location_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_shipping_categories", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -967,12 +953,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.datetime "updated_at"
     t.decimal "amount_remaining", precision: 8, scale: 2
     t.integer "store_credit_reason_id"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.index ["deleted_at"], name: "index_spree_store_credit_events_on_deleted_at"
     t.index ["store_credit_id"], name: "index_spree_store_credit_events_on_store_credit_id"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_store_credit_reasons", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -1164,12 +1148,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_084099) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "openid_identifier"
-    t.text "customer_metadata", size: :long, collation: "utf8mb4_bin"
-    t.text "admin_metadata", size: :long, collation: "utf8mb4_bin"
+    t.json "customer_metadata"
+    t.json "admin_metadata"
     t.string "spree_api_key", limit: 48
     t.index ["spree_api_key"], name: "index_spree_users_on_spree_api_key"
-    t.check_constraint "json_valid(`admin_metadata`)", name: "admin_metadata"
-    t.check_constraint "json_valid(`customer_metadata`)", name: "customer_metadata"
   end
 
   create_table "spree_variant_property_rule_conditions", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|

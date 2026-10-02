@@ -8,11 +8,13 @@ Pastbuzzは、Rails 8を基盤とするモノリシックなWebアプリケー�
 
 - Ruby on Rails 8.1
 - Solidus 4.7
-- TrilogyによるMariaDB接続
+- TrilogyによるMySQL 8.4接続
 - Hotwire（Turbo / Stimulus）
 - Importmap
 - Solid Cache、Solid Queue、Solid Cable
 - Puma
+
+データベースはMySQL 8.4を使用します。選定理由は[MySQL 8.4の採用](decisions/0007-use-mysql-84.md)を参照してください。
 
 ## 責務分担
 
