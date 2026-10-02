@@ -18,3 +18,7 @@ Solidus本体のEngineは `Spree::` 名前空間を使います。Pastbuzz独自
 ## 影響
 
 この決定はRubyの名前空間に関するものです。URLのprefix、トップページ、`/products` や `/cart` のルート所有者は別途決定します。
+
+## 後続の決定
+
+2026-10-02に、トップページ `/` はStarter Frontend、会員画面は `/my`、自社APIは `/api/v1/pastbuzz/...`、独自管理機能は `/admin/pastbuzz/...` とする方針を決定しました。この名前空間の決定は引き続き維持します。現在のURL方針と統合時の確認事項は[Solidusの決定事項と課題](../solidus-decisions.md#s2-urlとコード上の名前空間)を参照してください。

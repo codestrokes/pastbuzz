@@ -9,7 +9,7 @@
 - `solidus` 4.7.1を利用しています。依存関係にはSolidus Core、Backend、APIなどが含まれます。
 - `Spree::Core::Engine` を `/` にマウントしており、`/admin/...` と `/api/...` のルートがあります。
 - Solidus Starter Frontendの採用は決定していますが、まだ生成・導入されていません。現時点で `/products` や `/cart` のストアフロント画面はありません。
-- アプリのルートには `/up` のhealth checkがあります。トップページの所有者と振る舞いは未決定です。
+- アプリのルートには `/up` のhealth checkがあります。トップページ `/` はStarter Frontendのホーム画面にする方針が決定済みですが、本体への実装は未着手です。
 - ホストアプリのテストはMinitestです。Solidus Starter FrontendのテンプレートはDevise関連機能、Tailwind CSS、RSpec等を追加するため、導入前に差分を確認する必要があります。
 - Auth0、ポイント連携、ストアフロント用のアプリコードはまだ導入されていません。
 
@@ -33,20 +33,21 @@
 - 推奨: Solidus Engineのマウントは `mount Spree::Core::Engine, at: "/"` のままにし、`namespace :ec` でEngine全体を包まないでください。Starter Frontendを採用する場合は、まずその `config/routes/storefront.rb` と `Spree::` のコントローラー・ビュー構成を維持します。自社独自の顧客向け機能に限って `Storefront::` を使うのは妥当です。
 - 決定: トップページ `/` はStarter Frontendのホーム画面を使います。検証生成では `home#index` が `/` を担当し、Solidusの `/admin`・`/api`、`/up` と共存することを確認しました。
 - 決定: 会員向け画面のprefixは `/my` とします。注文履歴やプロフィール等の会員機能はこのprefix配下に配置します。
-- 決定: 自社独自の会員APIを追加する場合は `/api/v1/pastbuzz/...` を使い、Solidus APIの既存ルートに統合します。追加時には既存route name/path/actionとの重複をテストします。
+- 決定: 自社独自の会員APIを追加する場合は `/api/v1/pastbuzz/...` を使います。Solidus APIとは別のホストアプリ側endpointとして扱い、Solidus APIの認証・基底Controllerを自動的に継承しません。会員APIの認証・認可を明示し、共有する業務処理だけをモデルやサービスへ置きます。
 - 決定: Solidus管理画面の独自機能は `/admin/pastbuzz/...` を使い、Solidus管理者認証・認可の配下に統合します。
-- ルート衝突に注意: `/admin/...` と `/api/...` はすでにSolidusが使っています。自社の管理・APIルートを同じprefixへ追加する場合は、Solidusのルート拡張として明示的に統合するか、Solidusの既存route name/path/actionと重ならない専用subpathを選びます。`/api/v1/pastbuzz/...` や `/admin/pastbuzz/...` は候補例であり、採用前に `bin/rails routes` とrequest testで衝突を確認します。
+- ルート衝突に注意: `/admin/...` と `/api/...` はすでにSolidusが使っています。採用済みの自社API prefix `/api/v1/pastbuzz/...` と独自管理機能prefix `/admin/pastbuzz/...` を追加する際も、Solidusの既存route name/path/actionと重ならないことを `bin/rails routes` とrequest testで確認します。自社APIはSolidus API EngineのControllerを継承せず、ホストアプリ側で独立した認証・認可境界を持ちます。
 - Controllerのコード名前空間はURL prefixと同じにする必要はありません。会員向け画面、API、管理画面は入口ごとの認証・認可を分け、共有する会員ドメインロジックはモデルやサービスへ置きます。
 - 実装時の確認: `/my`、`/api/v1/pastbuzz/...`、`/admin/pastbuzz/...` のroute name/path/actionがSolidus既存ルートと重ならないことを `bin/rails routes` とrequest testで固定します。
 
 ### S3. Auth0とSolidusユーザーの対応
 
-- 状態: 決定済み（Auth0会員認証、管理者認証、ゲスト注文、既存会員の連携方針）
+- 状態: 基本方針は決定済み。issuer、セッション分離、管理者権限境界、カート引継ぎ等の実装仕様は未決定
 - 論点: Auth0の識別子とローカルの `Spree::User` の対応、既存ユーザーの連携、ログアウト、権限、ゲスト注文、アカウント重複時の扱い
 - 決定: Auth0の安定した `sub` はメールアドレスと分け、`Spree::User` の専用一意列 `auth0_subject` に保存します。メールアドレスの変更で別会員にならない構成とします。
 - 決定: Auth0はストアフロント会員認証に使い、Solidus管理画面（`/admin`）はSolidus/Deviseの管理者認証を維持します。ストアフロント向けDeviseログインを管理者ログインと混同しないよう、ルートと認可を分離します。
 - 決定: Auth0未ログインのゲスト購入を許可します。ゲスト注文はSolidusのゲスト注文として扱い、Auth0 subjectのない注文を会員注文として扱いません。
 - 決定: 既存のSolidus会員とAuth0 subjectはメールアドレス一致だけでは自動連携しません。既存会員が元の認証方式で再認証した後に明示的に連携します。
+- 実装前に決めること: 単一のAuth0 issuer（tenant/domain）を使うことを前提に `auth0_subject` を一意にします。複数issuerを使う要件が生じた場合は、issuerとsubjectの組を一意にする方式へ見直します。Auth0 callbackではstate/nonce等のCSRF・replay対策とissuer/audience/署名/有効期限の検証を行い、Auth0ログイン後にSolidusの現在ユーザーを設定する方法を定めます。会員用Auth0セッションと管理者用Deviseセッションの分離、管理者権限を持つ会員の管理画面アクセス可否、各ログアウトの範囲、既存メール衝突時の連携導線、ゲストカートの会員への引継ぎも実装仕様で定めます。
 - 推奨: Auth0の安定したsubjectをローカルユーザーへ一意に結び付け、注文所有者として使うローカルレコードを明確にします。メールアドレスだけを恒久的な識別子にしないでください。
 - 注意: Starter Frontendは `solidus_auth_devise` とDeviseベースの画面・ルートを追加します。Auth0採用時に見た目のログイン画面だけを削除して終わりとは限りません。Devise gemを外す前に、`Spree::User` の認証機能、Solidusが利用する認証API、管理者認証、パスワードリセット、既存注文との関連を確認します。
 
@@ -69,9 +70,10 @@
 
 ### S6. テストフレームワーク
 
-- 状態: Minitest採用済み。Starter FrontendのRSpec資産の扱いは未決定
+- 状態: Minitest採用済み。生成RSpec資産は仕様の参考にとどめ、ホストアプリのテストには残さない方針が決定済み。Minitestへのテスト統合は未着手
 - 推奨: 既存の `docs/decisions/0001-use-minitest.md` に従い、ホストアプリではRSpecとMinitestを混在させません。Starter FrontendのRSpecテストは仕様の参考にし、重要なストアフロントの振る舞いだけをMinitestで検証します。すべての生成RSpecテストを一対一で移植することは前提にしません。
-- 必須テスト: 主要な商品閲覧、カート、チェックアウト、認証から注文所有者への紐付け、ポイント利用をユーザー視点で検証します。
+- 初期リリースの必須テスト: 主要な商品閲覧、カート、チェックアウト、認証から注文所有者への紐付けをユーザー視点で検証します。
+- 後続フェーズのテスト: ポイント利用は初期リリース対象外とし、ポイント機能を導入するフェーズで追加します。
 
 ### S7. Solidus管理画面の拡張
 
@@ -85,12 +87,15 @@
 - 決定: 初期配送範囲は日本全国（離島を含む）とします。配送業者、送料、遠隔地追加料金、配送日数は別途決定します。
 - 決定: 消費者向けの商品価格は税込表示を基本とします。適用税率や軽減税率対象商品は商品カテゴリと会計要件を確認して決定します。
 - 決定: 軽減税率対象商品も初期販売に含みます。商品ごとに税区分を設定できる構成とし、適用率・対象商品の判定は会計担当または専門家に確認します。
-- 決定: 初期リリースはStripe経由のクレジットカード決済を提供し、その他の決済手段は後続の検討とします。
+- 決定: 初期リリースはStripe経由のクレジットカード決済を提供し、その他の決済手段は後続の検討とします。購入体験の先行検証ではStripe test modeを利用します。
 - 決定: 公式の `solidus_stripe` 拡張による画面内決済を使います。Stripe.jsとPayment Intentsを利用し、3D Secure等の追加認証を含む注文状態遷移を検証します。Stripe Checkoutのホスト型ページは採用しません。
 - 運用条件: 初期リリースでは決済手段をカードのみに制限します。Stripeの秘密鍵・Webhook secretは環境変数またはRails Credentialsで管理し、ソースへ含めません。
 - 互換性確認: `solidus_stripe` 5.xの依存条件はSolidus Core 3.2以上5未満で、Solidus 4.7系と互換範囲です。アプリにはまだ追加していないため、導入時にbundle解決、Stripe test mode、Webhook、3D Secure、取消・返金を検証します。
+- 実装前に決めること: 与信後captureか即時captureかを業務・出荷タイミングに合わせて選びます。3D Secure中断、決済タイムアウト後の再試行と二重決済防止、Webhookの署名検証・重複・遅延・順序逆転、Stripe決済成功とSolidus注文状態が不一致になった場合の照合・復旧、一部返金を含む取消・返金を設計し、`solidus_stripe` 標準機能で担保される範囲と自社責務を切り分けます。
 - 参考: [solidus_stripe](https://github.com/solidusio-contrib/solidus_stripe)、[Stripe Payment Intents](https://docs.stripe.com/payments/payment-intents)
 - 決めること: JPYと日本語ロケール、消費税の計算・表示方法、国内住所と送料、Stripeアカウント/Webhook設定、在庫管理、注文番号、メール送信、返品・返金方針
+- 税の受け入れ条件: 標準税率・軽減税率商品の混在注文について、税額の集計単位と端数処理を会計要件に基づいて決めてテストします。送料・値引きの税務上の扱いと、一部返品時の税額・返金額も確認します。
+- 配送の確認事項: 日本全国（離島含む）配送の前提に加え、常温・冷蔵等の温度帯を分ける商品があるかを物流要件で確認します。複数温度帯が必要な場合は、分割出荷・送料・在庫引当への影響を設計します。
 - 推奨: 日本国内の販売・会計要件に合わせて設定し、テスト環境で注文から取消・返金まで確認してから本番化します。税務・適格請求書等の要件は専門家または会計担当に確認します。鍵や決済情報はソースに含めず、環境またはRails Credentials等で管理します。
 
 ### S9. テンプレート更新とSolidusアップグレード
@@ -103,7 +108,7 @@
 1. ストアフロントの調達方針と生成差分を確認する（S1）
 2. URL、トップページ、会員ページの境界を決める（S2）
 3. Auth0と `Spree::User` の対応を決める（S3）
-4. 店舗設定とポイントの業務仕様を整理する（S4、S8）
+4. 初期リリースの店舗設定を整理する（S8）。ポイントの業務仕様は後続フェーズで決める（S4）
 5. アセットとテストの統合方針を確定する（S5、S6）
 6. 管理画面の拡張と更新手順を必要に応じて決める（S7、S9）
 
