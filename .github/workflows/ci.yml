@@ -93,6 +93,12 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Precompile assets
+        env:
+          RAILS_ENV: production
+          SECRET_KEY_BASE_DUMMY: "1"
+        run: bin/rails assets:precompile
+
       - name: Run tests
         env:
           RAILS_ENV: test

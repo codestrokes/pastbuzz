@@ -1,24 +1,29 @@
-# README
+# Pastbuzz
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails 8.1 / Solidus 4.7 を使ったストアフロントアプリケーションです。初期の販売・配送対象は日本国内です。
 
-Things you may want to cover:
+## 開発環境
 
-* Ruby version
+- Docker
+- Visual Studio Code と Dev Containers 拡張機能
 
-* System dependencies
+リポジトリをDev Containerで開くと、Ruby 3.4.9、MySQL 8.4、System Test用のSeleniumが利用できます。コンテナ作成後にRuby依存GemのインストールとDBセットアップが実行されます。
 
-* Configuration
+```sh
+bin/rails server
+```
 
-* Database creation
+アプリケーションは `http://localhost:3000` で確認できます。
 
-* Database initialization
+```sh
+RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile
+```
 
-* How to run the test suite
+## テスト
 
-* Services (job queues, cache servers, search engines, etc.)
+```sh
+bin/rails test
+bin/rails test:system
+```
 
-* Deployment instructions
-
-* ...
+アプリケーションのテストは `test/` 配下のMinitestを使用します。詳細は[テスト方針](docs/testing.md)を参照してください。

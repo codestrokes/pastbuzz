@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Solidus BackendのSassC compressorがTailwind CSSの新しい構文に対応しないため無効化する。
+  # TODO: 【要確認】Starter Frontend導入後に再評価する（Tailwind以外のSprockets CSSは圧縮されない）。
+  config.assets.css_compressor = nil
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
