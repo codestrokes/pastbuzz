@@ -33,3 +33,12 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+# Ignore other unneeded files.
+*.swp
+*~
+.#*
+.project
+.DS_Store
+.idea
+.iml
+TAGS
