@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.4"
-gem "solidus", "~> 4.7.1"
+gem "solidus", "~> 4.8.0"
 # Use Trilogy to connect Active Record to MySQL
 gem "trilogy", "~> 2.13"
 # Use the Puma web server [https://github.com/puma/puma]
