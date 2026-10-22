@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.4"
 gem "solidus", "~> 4.7.1"
 # Use Trilogy to connect Active Record to MySQL
-gem "trilogy", "~> 2.7"
+gem "trilogy", "~> 2.13"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]

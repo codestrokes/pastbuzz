@@ -526,7 +526,7 @@ GEM
     thruster (0.1.26-x86_64-linux)
     tilt (2.9.0)
     timeout (0.6.1)
-    trilogy (2.13.0)
+    trilogy (2.13.1)
       bigdecimal
     tsort (0.2.0)
     turbo-rails (2.0.23)
@@ -584,7 +584,7 @@ DEPENDENCIES
   solidus (~> 4.7.1)
   stimulus-rails
   thruster
-  trilogy (~> 2.7)
+  trilogy (~> 2.13)
   turbo-rails
   tzinfo-data
   web-console
