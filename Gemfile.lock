@@ -523,7 +523,7 @@ GEM
     thruster (0.1.27-x86_64-linux)
     tilt (2.9.0)
     timeout (0.6.1)
-    trilogy (2.13.1)
+    trilogy (2.13.3)
       bigdecimal
     tsort (0.2.0)
     turbo-rails (2.0.23)
